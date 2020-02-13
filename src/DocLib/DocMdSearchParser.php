@@ -5,24 +5,15 @@ namespace EasySwoole\DocSystem\DocLib;
 
 
 use EasySwoole\DocSystem\DocLib\Markdown\Parser;
-use EasySwoole\EasySwoole\Config;
-use EasySwoole\Utility\File;
 use voku\helper\HtmlDomParser;
 use voku\helper\SimpleHtmlDom;
 
 class DocMdSearchParser
 {
-    static function scan()
+    static function parserDoc2JsonUrlMap(string $docRoot):array
     {
-        $list = Config::getInstance()->getConf('DOC.LANGUAGE');
-        foreach ($list as $lan){
-            self::parserFiles2JsonUrlMap($lan);
-        }
-    }
-
-    protected static function parserFiles2JsonUrlMap($lan){
         $jsonList = [];
-        $sidebarHtml = self::getSidebar($lan);
+        $sidebarHtml = self::getSidebar($docRoot);
         $dom = HtmlDomParser::str_get_html($sidebarHtml);
         //获取导航栏所有md链接
         $aList = $dom->find('a');
@@ -36,37 +27,30 @@ class DocMdSearchParser
             $jsonList[] = [
                 'id'  => $id,
                 'title'  => $name,
-                'content'  => self::getMdContent($path,$lan),
+                'content'  => self::getMdContent($docRoot.$path),
                 'link'  => Parser::mdLink2Html($path),
             ];
             $id++;
         }
-        $jsonPath = EASYSWOOLE_ROOT."/Static/keyword{$lan}.json";
-
-        File::createFile($jsonPath,json_encode($jsonList,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
+        return $jsonList;
     }
 
-    protected static function getSidebar($lan)
+    protected static function getSidebar($docRoot):string
     {
-        $docPath = Config::getInstance()->getConf('DOC.PATH');
-
-        $sidebarPath = EASYSWOOLE_ROOT."/{$lan}/sidebar.md";
+        $sidebarPath = $docRoot."/sidebar.md";
         //获取sideBar的parserHtml
         $sideBarResult = Parser::html($sidebarPath);
         $html = $sideBarResult->getHtml();
         return $html;
     }
 
-    protected static function getMdContent($path,$lan){
-        //这边的path已经存在了/斜杆
-        $filePath = EASYSWOOLE_ROOT."/$lan{$path}";
-
-        if (!file_exists($filePath)) {
+    protected static function getMdContent(string $file)
+    {
+        if (!file_exists($file)) {
             return null;
         }
-        $result = Parser::htmlWithLinkHandel($filePath);
+        $result = Parser::htmlWithLinkHandel($file);
         $html = $result->getHtml();
         return strip_tags($html);
-
     }
 }

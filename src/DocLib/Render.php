@@ -3,6 +3,8 @@
 
 namespace EasySwoole\DocSystem\DocLib;
 
+use EasySwoole\Component\ChannelLock;
+use EasySwoole\DocSystem\DocLib\Exception\Exception;
 use EasySwoole\DocSystem\DocLib\Exception\PageNotFound;
 use EasySwoole\DocSystem\DocLib\Markdown\Parser;
 
@@ -20,40 +22,55 @@ class Render
         return $this->parserMdFile('index.md')->getHtml();
     }
 
-    function displayFile(string $file)
+    function displayFile(string $file,string $language,?array $extraData = null)
     {
+        $file = ltrim($file,'/');
         $page = $this->parserMdFile($file);
-        $sideBar = $this->parserMdFile('sideBar.md');
-        $templatePage = $this->parserMdFile('template.md');
-        $config = $this->configMerge($page->getConfig(),$templatePage->getConfig());
-        $headHtml = $this->config2HtmlTag($config);
-        return str_replace(['{$header}', '{$sidebar}', '{$content}', '{$lang}'], [$headHtml , $sideBar->getHtml(), $page->getHtml(), $this->config->getLanguage()],$templatePage->getHtml());
+        $sideBar = $this->parserMdFile('sidebar.md');
+        $headHtml = $this->config2HtmlTag($page->getConfig());
+        $data = [
+            'sidebar'=>$sideBar,
+            'header'=>$headHtml,
+            'content'=>$page->getHtml(),
+            'lang'=>$language,
+            "headerArray"=>$page->getConfig(),
+            'extra'=>$extraData
+        ];
+        return $this->smartyRender('template.md',$data);
     }
 
-    function pageNotFound()
+    function pageNotFound(string $language)
     {
-        return $this->displayFile('404.md');
+        return $this->displayFile('404.md',$language);
     }
-
 
     protected function parserMdFile(string $file)
     {
-        $file = EASYSWOOLE_ROOT."/{$this->config->getLanguage()}/$file";
+        $file = $this->config->getRoot()."/$file";
         if(!file_exists($file)){
             throw new PageNotFound("file {$file} not exist");
         }
         return Parser::htmlWithLinkHandel($file);
     }
 
-    protected function configMerge(array $config, array $globalConfig)
+    protected function smartyRender(string $template,array $data):string
     {
-        return [
-            'title'=>$config['title']??$globalConfig['title']??'',
-            'meta'=>$config['meta']??$globalConfig['meta']??[],
-            'base'=>array_merge($config['base']??[],$globalConfig['base']??[]),
-            'link'=>array_merge($config['link']??[],$globalConfig['link']??[]),
-            'script'=>array_merge($config['script']??[],$globalConfig['script']??[]),
-        ];
+        $ret = ChannelLock::getInstance()->deferLock('smarty',5);
+        if($ret){
+            $smarty = new \Smarty();
+            $smarty->setTemplateDir($this->config->getRoot()); //设置模板目录
+            $smarty->setCompileDir($this->config->getTempDir() . '/templates_c/');
+            $smarty->setCacheDir($this->config->getTempDir() . '/smarty_cache/');
+            $smarty->caching = false;
+            $smarty->cache_lifetime = 0;
+            foreach ($data as $key => $val){
+                $smarty->assign($key,$val);
+            }
+            return $smarty->fetch($template,$cache_id = null, $compile_id = null, $parent = null, $display = false,
+                $merge_tpl_vars = true, $no_output_filter = false);
+        }else{
+            throw new Exception("get smarty lock timeout");
+        }
     }
 
     protected function config2HtmlTag(array $config)
