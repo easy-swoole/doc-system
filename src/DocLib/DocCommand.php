@@ -10,6 +10,12 @@ use EasySwoole\Utility\File;
 
 class DocCommand implements CommandInterface
 {
+    protected $root;
+    function __construct(string $projectRoot)
+    {
+        $this->root = $projectRoot;
+    }
+
     public function commandName(): string
     {
         return 'doc';
@@ -23,15 +29,15 @@ class DocCommand implements CommandInterface
                 $files = File::scanDirectory(__DIR__.'/Resource/Markdown');
                 foreach ($files['files'] as $file){
                     $info = pathinfo($file);
-                    Utility::releaseResource($file, EASYSWOOLE_ROOT ."/{$lang}/". $info['basename']);
+                    Utility::releaseResource($file, $this->root ."/{$lang}/". $info['basename']);
                 }
-                if(file_exists(EASYSWOOLE_ROOT.'/Static')){
+                if(file_exists($this->root.'/Static')){
                     return 'Static Dir is exits,you can recover it in manual ';
                 }else{
                     $files = File::scanDirectory(__DIR__.'/Resource/Static');
                     foreach ($files['files'] as $file){
                         $new = str_replace(__DIR__."/Resource/",'',$file);
-                        Utility::releaseResource($file, EASYSWOOLE_ROOT ."/{$new}");
+                        Utility::releaseResource($file, $this->root ."/{$new}");
                     }
                 }
                 return "{$lang} 语言目录创建成功";
