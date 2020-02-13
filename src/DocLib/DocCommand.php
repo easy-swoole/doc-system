@@ -25,11 +25,14 @@ class DocCommand implements CommandInterface
                     $info = pathinfo($file);
                     Utility::releaseResource($file, EASYSWOOLE_ROOT ."/{$lang}/". $info['basename']);
                 }
-
-                $files = File::scanDirectory(__DIR__.'/Resource/Static');
-                foreach ($files['files'] as $file){
-                    $new = str_replace(__DIR__."/Resource/",'',$file);
-                    Utility::releaseResource($file, EASYSWOOLE_ROOT ."/{$new}");
+                if(file_exists(EASYSWOOLE_ROOT.'/Static')){
+                    return 'Static Dir is exits,you can recover it in manual ';
+                }else{
+                    $files = File::scanDirectory(__DIR__.'/Resource/Static');
+                    foreach ($files['files'] as $file){
+                        $new = str_replace(__DIR__."/Resource/",'',$file);
+                        Utility::releaseResource($file, EASYSWOOLE_ROOT ."/{$new}");
+                    }
                 }
                 return "{$lang} 语言目录创建成功";
             }

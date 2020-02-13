@@ -73,7 +73,7 @@ meta:
         var articles = [];
 
         $.ajax({
-            url: '/keywordCn.json',
+            url: '/keyword{$lang}.json',
             success: function (data) {
                 articles = data;
             }
