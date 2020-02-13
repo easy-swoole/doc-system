@@ -67,8 +67,6 @@ class Parser
             $info = pathinfo($a->href);
             if (isset($info['extension']) && ($info['extension'] == 'md')) {
                 $a->href = self:: mdLink2Html($a->href);
-            } else {
-                $a->setAttribute("target", "_blank");
             }
         }
 
