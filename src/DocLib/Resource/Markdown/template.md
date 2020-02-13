@@ -29,12 +29,11 @@
                             <span class="title">Language</span> <span class="arrow right"></span>
                         </button>
                         <ul class="nav-dropdown" style="display: none;">
-                            <li class="dropdown-item">
-                                <a href="javascript:void(0)" data-lang="Cn" class="nav-link lang-change">简体中文</a>
-                            </li>
-                            <li class="dropdown-item">
-                                <a href="javascript:void(0)" data-lang="En" class="nav-link lang-change">ENGLISH</a>
-                            </li>
+                            {foreach from=$allowLanguages item=lang key=key}
+                                <li class="dropdown-item">
+                                    <a href="javascript:void(0)" data-lang="{$key}" class="nav-link lang-change">{$lang}</a>
+                                </li>
+                            {/foreach}
                         </ul>
                     </div>
                 </div>

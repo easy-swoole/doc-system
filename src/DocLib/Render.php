@@ -24,7 +24,7 @@ class Render
             'extra'=>$extraData,
             'allowLanguages'=>$this->config->getAllowLanguages()
         ];
-        return $this->smartyRender('index.md',$data);
+        return $this->smartyRender('index.tpl',$data);
     }
 
     function displayFile(string $file,string $language,?array $extraData = null)
@@ -42,7 +42,7 @@ class Render
             'extra'=>$extraData,
             'allowLanguages'=>$this->config->getAllowLanguages()
         ];
-        return $this->smartyRender('template.md',$data);
+        return $this->smartyRender('template.tpl',$data);
     }
 
     function pageNotFound(string $language)
