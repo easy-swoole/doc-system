@@ -20,10 +20,16 @@ class DocCommand implements CommandInterface
         if(isset($args[0])){
             if($args[0] == 'extra' && isset($args[1])){
                 $lang = $args[1];
-                $files = File::scanDirectory(EASYSWOOLE_ROOT.'/App/DocLib/Resource/Markdown');
+                $files = File::scanDirectory(__DIR__.'/Resource/Markdown');
                 foreach ($files['files'] as $file){
                     $info = pathinfo($file);
                     Utility::releaseResource($file, EASYSWOOLE_ROOT ."/{$lang}/". $info['basename']);
+                }
+
+                $files = File::scanDirectory(__DIR__.'/Resource/Static');
+                foreach ($files['files'] as $file){
+                    $new = str_replace(__DIR__."/Resource/",'',$file);
+                    Utility::releaseResource($file, EASYSWOOLE_ROOT ."/{$new}");
                 }
                 return "{$lang} 语言目录创建成功";
             }
