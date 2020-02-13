@@ -34,7 +34,7 @@ class Render
         $sideBar = $this->parserMdFile('sidebar.md');
         $headHtml = $this->config2HtmlTag($page->getConfig());
         $data = [
-            'sidebar'=>$sideBar,
+            'sidebar'=>$sideBar->getHtml(),
             'header'=>$headHtml,
             'content'=>$page->getHtml(),
             'lang'=>$language,
@@ -52,7 +52,7 @@ class Render
 
     protected function parserMdFile(string $file)
     {
-        $file = $this->config->getRoot()."/$file";
+        $file = $this->config->getDocRoot()."/$file";
         if(!file_exists($file)){
             throw new PageNotFound("file {$file} not exist");
         }
@@ -64,7 +64,7 @@ class Render
         $ret = ChannelLock::getInstance()->deferLock('smarty',5);
         if($ret){
             $smarty = new \Smarty();
-            $smarty->setTemplateDir($this->config->getRoot()); //设置模板目录
+            $smarty->setTemplateDir($this->config->getDocRoot()); //设置模板目录
             $smarty->setCompileDir($this->config->getTempDir() . '/templates_c/');
             $smarty->setCacheDir($this->config->getTempDir() . '/smarty_cache/');
             $smarty->caching = false;

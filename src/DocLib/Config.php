@@ -8,24 +8,24 @@ use EasySwoole\Spl\SplBean;
 
 class Config extends SplBean
 {
-    protected $root;
+    protected $docRoot;
     protected $language;
     protected $tempDir;
     protected $allowLanguages = [];
     /**
      * @return mixed
      */
-    public function getRoot()
+    public function getDocRoot()
     {
-        return $this->root;
+        return $this->docRoot;
     }
 
     /**
-     * @param mixed $root
+     * @param mixed $docRoot
      */
-    public function setRoot($root): void
+    public function setDocRoot($docRoot): void
     {
-        $this->root = $root;
+        $this->docRoot = $docRoot;
     }
 
     /**
