@@ -17,9 +17,14 @@ class Render
         $this->config = $config;
     }
 
-    function home():string
+    function home(string $language,?array $extraData = null):string
     {
-        return $this->parserMdFile('index.md')->getHtml();
+        $data = [
+            'lang'=>$language,
+            'extra'=>$extraData,
+            'allowLanguages'=>$this->config->getAllowLanguages()
+        ];
+        return $this->smartyRender('index.md',$data);
     }
 
     function displayFile(string $file,string $language,?array $extraData = null)
@@ -34,7 +39,8 @@ class Render
             'content'=>$page->getHtml(),
             'lang'=>$language,
             "headerArray"=>$page->getConfig(),
-            'extra'=>$extraData
+            'extra'=>$extraData,
+            'allowLanguages'=>$this->config->getAllowLanguages()
         ];
         return $this->smartyRender('template.md',$data);
     }

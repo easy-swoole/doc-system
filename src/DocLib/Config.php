@@ -11,6 +11,7 @@ class Config extends SplBean
     protected $root;
     protected $language;
     protected $tempDir;
+    protected $allowLanguages = [];
     /**
      * @return mixed
      */
@@ -57,6 +58,22 @@ class Config extends SplBean
     public function setTempDir($tempDir): void
     {
         $this->tempDir = $tempDir;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllowLanguages(): array
+    {
+        return $this->allowLanguages;
+    }
+
+    /**
+     * @param array $allowLanguages
+     */
+    public function setAllowLanguages(array $allowLanguages): void
+    {
+        $this->allowLanguages = $allowLanguages;
     }
 
     protected function initialize(): void
