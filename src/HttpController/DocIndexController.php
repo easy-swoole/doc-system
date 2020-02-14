@@ -27,10 +27,14 @@ abstract class DocIndexController extends Controller
         if (substr($path,-5) =='.html'){
             $filePath = substr($path,0,-5) . '.md';
             $filePath = ltrim($filePath,'/');
-            if ($this->request()->getMethod() == 'POST') {
-                $file = ltrim($filePath,'/');
-                $page = $this->render()->parserMdFile($file);
-                $this->writeJson(Status::CODE_OK, $page, 'success');
+            if (strtoupper($this->request()->getMethod()) == 'POST') {
+                try{
+                    $file = ltrim($filePath,'/');
+                    $page = $this->render()->parserMdFile($file);
+                    $this->writeJson(Status::CODE_OK, $page, 'success');
+                }catch (\Throwable $throwable){
+                    $this->writeJson(Status::CODE_NOT_FOUND, [], $throwable->getMessage());
+                }
             }else{
                 $html = $this->render()->displayFile($filePath,$this->getLanguage(),[]);
                 $this->html($html);
