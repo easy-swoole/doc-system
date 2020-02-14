@@ -50,7 +50,7 @@ class Render
         return $this->displayFile('404.md',$language);
     }
 
-    function parserMdFile(string $file)
+    protected function parserMdFile(string $file)
     {
         $file = $this->config->getDocRoot()."/$file";
         if(!file_exists($file)){
