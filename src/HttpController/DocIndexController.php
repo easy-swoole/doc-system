@@ -20,14 +20,21 @@ abstract class DocIndexController extends Controller
         $this->html($html);
     }
 
+
     protected function actionNotFound(?string $action)
     {
         $path = $this->request()->getUri()->getPath();
         if (substr($path,-5) =='.html'){
             $filePath = substr($path,0,-5) . '.md';
             $filePath = ltrim($filePath,'/');
-            $html = $this->render()->displayFile($filePath,$this->getLanguage(),[]);
-            $this->html($html);
+            if ($this->request()->getMethod() == 'POST') {
+                $file = ltrim($filePath,'/');
+                $page = $this->render()->parserMdFile($file);
+                $this->writeJson(Status::CODE_OK, $page, 'success');
+            }else{
+                $html = $this->render()->displayFile($filePath,$this->getLanguage(),[]);
+                $this->html($html);
+            }
         }else{
             $this->response()->withStatus(Status::CODE_NOT_FOUND);
         }
