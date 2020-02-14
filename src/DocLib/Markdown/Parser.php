@@ -4,6 +4,7 @@
 namespace EasySwoole\DocSystem\DocLib\Markdown;
 
 
+use EasySwoole\ParserDown\ParserDown;
 use voku\helper\HtmlDomParser;
 use voku\helper\SimpleHtmlDom;
 
@@ -34,7 +35,7 @@ class Parser
         }
         fclose($file);
         $result->setConfig(yaml_parse($head));
-        $parsedown = new \Parsedown();
+        $parsedown = new ParserDown();
         $html = $parsedown->text($content);;
         $result->setHtml($html);
         return $result;
