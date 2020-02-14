@@ -48,7 +48,7 @@ class DocCommand implements CommandInterface
 
     public function help(array $args): ?string
     {
-        return "php easyswoole doc create LANGUAGE 创建语言目录";
+        return "php easyswoole doc extra LANGUAGE 创建语言目录";
     }
 
 }
