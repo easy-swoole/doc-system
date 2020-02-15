@@ -25,7 +25,7 @@
                     <input aria-label="Search" autocomplete="off" spellcheck="false" class="" placeholder="" id="SearchValue">
                     <div class="resultList" id="resultList" style="display: none"></div>
                 </div>
-                <div class="navItem">
+                <div class="navItem lang-select">
                     <div class="dropdown-wrapper">
                         <button type="button" aria-label="Select language" class="dropdown-title">
                             <span class="title">Language</span> <span class="arrow right"></span>
@@ -153,9 +153,12 @@
         });
 
         // 切换中英文
-        $('.dropdown-title').click(function (e) {
+        $('.lang-select').mouseover(function (e) {
             $('.nav-dropdown').toggle();
-        })
+        });
+        $('.lang-select').mouseout(function (e) {
+            $('.nav-dropdown').toggle();
+        });
 
         $('.lang-change').click(function (e) {
             var lang = $(this).data('lang');
