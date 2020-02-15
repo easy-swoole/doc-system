@@ -95,7 +95,7 @@ class Render
                             //多重标签
                             $html .= " $propertyKey=\"{$propertyValue}\"";
                         }
-                        $html .= "/>";
+                        $html .= ">";
                         $html .= "\n";;
                     }
                 } else {
