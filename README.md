@@ -68,10 +68,10 @@ class Index extends DocIndexController
     protected function render(): Render
     {
         $config = new Config();
-        $config->setDocRoot(EASYSWOOLE_ROOT."/".$this->getLanguage());
+        $config->setRoot(EASYSWOOLE_ROOT."/".$this->getLanguage());
         $config->setAllowLanguages(["Cn"=>"简体中文","En"=>'English']);
         $config->setTempDir(EASYSWOOLE_TEMP_DIR);
-        $config->setLanguage($this->getLanguage());
+        $config->setDefaultLanguage($this->getLanguage());
         return new Render($config);
     }
 

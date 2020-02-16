@@ -20,7 +20,7 @@
         </div>
         <div class="links">
             <a href="https://www.easyswoole.com">项目官网</a>
-            <a href="/hello.html">Hello</a>
+            <a href="/{$lang}/hello.html">Hello</a>
         </div>
     </div>
 </div>

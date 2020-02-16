@@ -8,40 +8,40 @@ use EasySwoole\Spl\SplBean;
 
 class Config extends SplBean
 {
-    protected $docRoot;
-    protected $language;
+    protected $root;
+    protected $defaultLanguage;
     protected $tempDir;
     protected $allowLanguages = [];
     /**
      * @return mixed
      */
-    public function getDocRoot()
+    public function getRoot()
     {
-        return $this->docRoot;
+        return $this->root;
     }
 
     /**
-     * @param mixed $docRoot
+     * @param mixed $root
      */
-    public function setDocRoot($docRoot): void
+    public function setRoot($root): void
     {
-        $this->docRoot = $docRoot;
+        $this->root = $root;
     }
 
     /**
      * @return mixed
      */
-    public function getLanguage()
+    public function getDefaultLanguage()
     {
-        return $this->language;
+        return $this->defaultLanguage;
     }
 
     /**
-     * @param mixed $language
+     * @param mixed $defaultLanguage
      */
-    public function setLanguage($language): void
+    public function setDefaultLanguage($defaultLanguage): void
     {
-        $this->language = $language;
+        $this->defaultLanguage = $defaultLanguage;
     }
 
     /**

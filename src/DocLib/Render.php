@@ -24,14 +24,14 @@ class Render
             'extra'=>$extraData,
             'allowLanguages'=>$this->config->getAllowLanguages()
         ];
-        return $this->smartyRender('index.tpl',$data);
+        return $this->smartyRender('index.tpl',$data,$language);
     }
 
     function displayFile(string $file,string $language,?array $extraData = null)
     {
         $file = ltrim($file,'/');
-        $page = $this->parserMdFile($file);
-        $sideBar = $this->parserMdFile('sidebar.md');
+        $page = $this->parserMdFile($file,$language);
+        $sideBar = $this->parserMdFile('sidebar.md',$language);
         $headHtml = $this->config2HtmlTag($page->getConfig());
         $data = [
             'sidebar'=>$sideBar->getHtml(),
@@ -42,7 +42,7 @@ class Render
             'extra'=>$extraData,
             'allowLanguages'=>$this->config->getAllowLanguages()
         ];
-        return $this->smartyRender('template.tpl',$data);
+        return $this->smartyRender('template.tpl',$data,$language);
     }
 
     function pageNotFound(string $language)
@@ -50,21 +50,21 @@ class Render
         return $this->displayFile('404.md',$language);
     }
 
-    protected function parserMdFile(string $file)
+    protected function parserMdFile(string $file,string $lang)
     {
-        $file = $this->config->getDocRoot()."/$file";
+        $file = $this->config->getRoot()."/{$lang}/$file";
         if(!file_exists($file)){
             throw new PageNotFound("file {$file} not exist");
         }
         return Parser::htmlWithLinkHandel($file);
     }
 
-    protected function smartyRender(string $template,array $data):string
+    protected function smartyRender(string $template,array $data,string $lang):string
     {
         $ret = ChannelLock::getInstance()->deferLock('smarty',5);
         if($ret){
             $smarty = new \Smarty();
-            $smarty->setTemplateDir($this->config->getDocRoot()); //设置模板目录
+            $smarty->setTemplateDir($this->config->getRoot()."/{$lang}"); //设置模板目录
             $smarty->setCompileDir($this->config->getTempDir() . '/templates_c/');
             $smarty->setCacheDir($this->config->getTempDir() . '/smarty_cache/');
             $smarty->caching = false;

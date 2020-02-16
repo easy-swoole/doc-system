@@ -4,6 +4,7 @@
 namespace EasySwoole\DocSystem\HttpController;
 
 
+use EasySwoole\DocSystem\DocLib\Config;
 use EasySwoole\DocSystem\DocLib\Exception\PageNotFound;
 use EasySwoole\DocSystem\DocLib\Render;
 use EasySwoole\Http\AbstractInterface\Controller;
@@ -11,16 +12,47 @@ use EasySwoole\Http\Message\Status;
 
 abstract class DocIndexController extends Controller
 {
-    protected abstract function render():Render;
-    protected abstract function getLanguage():string ;
-    /*
-     * 这边返回相对路径即可
-     */
-    protected abstract function markdownFile():string ;
+    public $lang;
+    protected abstract function config():Config;
+    protected function onRequest(?string $action): ?bool
+    {
+        $default = $this->config()->getDefaultLanguage();
+        $queryPath = $this->request()->getUri()->getPath();
+        if($this->request()->getUri()->getPath() == '/'){
+            $this->lang = $default;
+        }else{
+            $allow = $this->config()->getAllowLanguages();
+            if (isset($allow[$this->getActionName()])) {
+                $this->lang = $this->getActionName();
+                /*
+                 * 判断是否首页
+                 */
+                if($queryPath == "/{$this->lang}.html"){
+                    $this->index();
+                    return false;
+                }
+            }else{
+                $this->lang = $default;
+            }
+        }
+        return true;
+    }
+
+    protected function getLanguage(): string
+    {
+        return $this->lang;
+    }
+
+    protected function markdownFile(): string
+    {
+        $path = $this->request()->getUri()->getPath();
+        return str_replace(["/{$this->getLanguage()}",".html"],['','.md'],$path);
+    }
 
     function index()
     {
-        $html = $this->render()->home($this->getLanguage(),[]);
+        $render = new Render($this->config());
+        $html = $render->home($this->getLanguage(),[]);
         $this->html($html);
     }
 
@@ -28,7 +60,8 @@ abstract class DocIndexController extends Controller
     {
         $path = $this->request()->getUri()->getPath();
         if (substr($path,-5) =='.html'){
-            $html = $this->render()->displayFile($this->markdownFile(),$this->getLanguage(),[]);
+            $render = new Render($this->config());
+            $html = $render->displayFile($this->markdownFile(),$this->getLanguage(),[]);
             $this->html($html);
         }else{
             $this->response()->withStatus(Status::CODE_NOT_FOUND);
@@ -45,7 +78,8 @@ abstract class DocIndexController extends Controller
     protected function onException(\Throwable $throwable): void
     {
         if($throwable instanceof PageNotFound){
-            $html = $this->render()->pageNotFound($this->getLanguage());
+            $render = new Render($this->config());
+            $html = $render->pageNotFound($this->getLanguage());
             $this->html($html);
         }else{
             throw $throwable;
