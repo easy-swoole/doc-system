@@ -13,6 +13,10 @@ abstract class DocIndexController extends Controller
 {
     protected abstract function render():Render;
     protected abstract function getLanguage():string ;
+    /*
+     * 这边返回相对路径即可
+     */
+    protected abstract function markdownFile():string ;
 
     function index()
     {
@@ -24,9 +28,7 @@ abstract class DocIndexController extends Controller
     {
         $path = $this->request()->getUri()->getPath();
         if (substr($path,-5) =='.html'){
-            $filePath = substr($path,0,-5) . '.md';
-            $filePath = ltrim($filePath,'/');
-            $html = $this->render()->displayFile($filePath,$this->getLanguage(),[]);
+            $html = $this->render()->displayFile($this->markdownFile(),$this->getLanguage(),[]);
             $this->html($html);
         }else{
             $this->response()->withStatus(Status::CODE_NOT_FOUND);
