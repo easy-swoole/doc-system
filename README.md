@@ -9,8 +9,8 @@ composer require easyswoole/doc-system
 ## render渲染
 render 渲染引擎需要注入一个配置项，然后由这个渲染引擎渲染文档页面
 ### config配置项
-- $docRoot; `文档主目录`
-- $language;`当前语言`
+- $root; `文档主目录`
+- $defaultLanguage;`默认语言`
 - $tempDir;`临时目录`
 - $allowLanguages = []; `所有语言列表`
 
@@ -33,7 +33,9 @@ render 渲染引擎需要注入一个配置项，然后由这个渲染引擎渲�
 - index.tpl 文档首页模板
 - sidebar.md 侧边栏菜单
 - template.tpl 文档系统模板文件
-
+::: warning
+多语言切换通过更改 127.0.0.1:9501/{语言目录}进行切换
+:::
 ## DocIndexController
 `EasySwoole\DocSystem\HttpController\DocIndexController` 控制器继承easyswoole的`EasySwoole\Http\AbstractInterface\Controller`  当用户访问服务器时,通过继承该文件进行处理请求,返回文档数据.   
 渲染步骤为:  
@@ -47,10 +49,10 @@ render 渲染引擎需要注入一个配置项，然后由这个渲染引擎渲�
 - 这些数据全部交给`template.md`,用`smarty`模板引擎渲染
 - 输出到页面
 
-###  render,getLanguage方法
+###  render方法
 render抽象方法需要用户自己实现,在`index`控制器继承`DocIndexController`,然后实现`render`,  
 该方法通过配置`EasySwoole\DocSystem\DocLib\Config`返回一个`EasySwoole\DocSystem\DocLib\Render`对象,用于渲染md文件 
- getLanguage方法用于配置文档系统所支持的语言,以及确认用户当前选择的语言(cookie确认)  
+
 例如:  
 ```php
 <?php
@@ -68,21 +70,11 @@ class Index extends DocIndexController
     protected function render(): Render
     {
         $config = new Config();
-        $config->setRoot(EASYSWOOLE_ROOT."/".$this->getLanguage());
+        $config->setRoot(EASYSWOOLE_ROOT);
         $config->setAllowLanguages(["Cn"=>"简体中文","En"=>'English']);
+        $config->setDefaultLanguage('Cn');
         $config->setTempDir(EASYSWOOLE_TEMP_DIR);
-        $config->setDefaultLanguage($this->getLanguage());
         return new Render($config);
-    }
-
-    protected function getLanguage(): string
-    {
-        $lang = $this->request()->getCookieParams('language');
-        $allow = ["Cn"=>"简体中文","En"=>'English'];
-        if(isset($allow[$lang])){
-            return $lang;
-        }
-        return 'Cn';
     }
 }
 ```
@@ -124,3 +116,9 @@ script: 配置script标签(引入js)
 ## 全文搜索配置
 `EasySwoole\DocSystem\DocLib\DocMdSearchParser::parserDoc2JsonUrlMap(语言目录)` 可通过解析不同语言模板目录的sidebar.md进行获取其所有的连接md文件,并进行组装json,用于前端的全文搜索功能  
 可在 `initialize` 进行缓存json数据 
+
+## 自定义模板系统
+通过重写`EasySwoole\DocSystem\HttpController\DocIndexController` 的方法,可自己实现其他自定义逻辑,例如:
+
+### 自定义语言切换方式
+本组件默认为第一个如今的第一个目录名作为当前语言,你也可以通过重写`onRequest`方法,讲语言设置改为cookie形式获取
