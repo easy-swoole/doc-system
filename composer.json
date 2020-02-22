@@ -3,7 +3,6 @@
     "require": {
         "php": ">=7.1",
         "ext-yaml": ">=2.0",
-        "voku/simple_html_dom": "^4.7",
         "easyswoole/parsedown": "^1.0.0",
         "easyswoole/http": "^1.3",
         "smarty/smarty": "^3.1"
