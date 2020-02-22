@@ -43,11 +43,11 @@ abstract class DocIndexController extends Controller
         return $this->lang;
     }
 
-    protected function markdownFile(): string
-    {
-        $path = $this->request()->getUri()->getPath();
-        return str_replace(["/{$this->getLanguage()}",".html"],['','.md'],$path);
-    }
+//    protected function markdownFile(): string
+//    {
+//        $path = $this->request()->getUri()->getPath();
+//        return str_replace(["/{$this->getLanguage()}",".html"],['','.md'],$path);
+//    }
 
     function index()
     {
@@ -61,26 +61,35 @@ abstract class DocIndexController extends Controller
         $path = $this->request()->getUri()->getPath();
         if (substr($path,-5) =='.html'){
             $render = new Render($this->config());
-            $html = $render->displayFile($this->markdownFile(),$this->getLanguage(),[]);
+            $path = str_replace(["/{$this->getLanguage()}",".html"],['','.md'],$path);
+            $html = $render->displayFile($path,$this->getLanguage(),[]);
             $this->html($html);
+        }else if(substr($path,-1,1) == '/'){
+            //如果是访问一个空目录
+            $this->display404Page();
         }else{
             $this->response()->withStatus(Status::CODE_NOT_FOUND);
         }
     }
 
-    protected function html(string $content)
+    protected function html(string $content,$status = 200)
     {
         $this->response()->withAddedHeader('Content-type', 'text/html; charset=utf-8');
-        $this->response()->withStatus(Status::CODE_OK);
+        $this->response()->withStatus($status);
         $this->response()->write($content);
+    }
+
+    protected function display404Page()
+    {
+        $render = new Render($this->config());
+        $html = $render->pageNotFound($this->getLanguage());
+        $this->html($html,404);
     }
 
     protected function onException(\Throwable $throwable): void
     {
         if($throwable instanceof PageNotFound){
-            $render = new Render($this->config());
-            $html = $render->pageNotFound($this->getLanguage());
-            $this->html($html);
+            $this->display404Page();
         }else{
             throw $throwable;
         }
