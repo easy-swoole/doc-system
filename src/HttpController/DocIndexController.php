@@ -43,11 +43,6 @@ abstract class DocIndexController extends Controller
         return $this->lang;
     }
 
-//    protected function markdownFile(): string
-//    {
-//        $path = $this->request()->getUri()->getPath();
-//        return str_replace(["/{$this->getLanguage()}",".html"],['','.md'],$path);
-//    }
 
     function index()
     {
