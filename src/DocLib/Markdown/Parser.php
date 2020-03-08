@@ -4,6 +4,7 @@
 namespace EasySwoole\DocSystem\DocLib\Markdown;
 
 
+use EasySwoole\DocSystem\DocLib\Exception\YamlError;
 use EasySwoole\ParserDown\ParserDown;
 use voku\helper\HtmlDomParser;
 use voku\helper\SimpleHtmlDom;
@@ -34,7 +35,11 @@ class Parser
             }
         }
         fclose($file);
-        $result->setConfig(yaml_parse($head));
+        $config = yaml_parse($head);
+        if($config === false){
+            throw new YamlError("yaml parse file {$path} error");
+        }
+        $result->setConfig($config);
         $parsedown = new ParserDown();
         $html = $parsedown->text($content);;
         $result->setHtml($html);

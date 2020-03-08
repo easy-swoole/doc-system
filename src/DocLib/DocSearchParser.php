@@ -8,12 +8,12 @@ use EasySwoole\DocSystem\DocLib\Markdown\Parser;
 use voku\helper\HtmlDomParser;
 use voku\helper\SimpleHtmlDom;
 
-class DocMdSearchParser
+class DocSearchParser
 {
-    static function parserDoc2JsonUrlMap(string $docRoot):array
+    static function parserDoc2JsonUrlMap(string $docRoot,string $lang):array
     {
         $jsonList = [];
-        $sidebarHtml = self::getSidebar($docRoot);
+        $sidebarHtml = self::getSidebar($docRoot.$lang);
         $dom = HtmlDomParser::str_get_html($sidebarHtml);
         //获取导航栏所有md链接
         $aList = $dom->find('a');
