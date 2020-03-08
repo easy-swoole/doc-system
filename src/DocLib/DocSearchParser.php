@@ -26,7 +26,7 @@ class DocSearchParser
             $name = $a->getNode()->textContent;
             $jsonList[] = [
                 'id'  => $id,
-                'title'  => $name,
+                'title'  => strtolower($name),
                 'content'  => self::getMdContent($docRoot.$path),
                 'link'  => Parser::mdLink2Html($path),
             ];
