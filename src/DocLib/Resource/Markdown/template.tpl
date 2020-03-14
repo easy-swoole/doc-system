@@ -27,9 +27,16 @@
         .sideBar-toggle-button {
             display: block;
             position: fixed;
-            left: 10px;
-            bottom: 15px;
+            left: 210px;
+            bottom: 50%;
             z-index: 99;
+            padding: 8px;
+            background-color: rgba(77,77,77,.1);
+            border-radius: 5px;
+        }
+        .sideBar-pack-up {
+            left: 5px;
+            padding: 8px 3px 8px 8px;
         }
 
         @media screen and (min-width: 700px) {
@@ -80,7 +87,7 @@
 <body>
 <div class="container layout-1">
     <a class="sideBar-toggle-button" href="javascript:;">
-        <i class="fa fa-bars" style="font-size: 1.3rem;color: #333;"></i>
+        <i class="fa fa-angle-left" style="font-size: 1.3rem;color: #333;"></i>
     </a>
     <header class="navBar">
         <div class="navInner">
@@ -128,9 +135,15 @@
             if (container.hasClass('layout-1')) {
                 container.removeClass('layout-1');
                 container.addClass('layout-2');
+                $('.sideBar-toggle-button').addClass('sideBar-pack-up');
+                $('.sideBar-toggle-button i').removeClass('fa-angle-left');
+                $('.sideBar-toggle-button i').addClass('fa-angle-right');
             } else {
                 container.removeClass('layout-2');
                 container.addClass('layout-1');
+                $('.sideBar-toggle-button').removeClass('sideBar-pack-up');
+                $('.sideBar-toggle-button i').removeClass('fa-angle-right');
+                $('.sideBar-toggle-button i').addClass('fa-angle-left');
             }
         }
         $('.sideBar-toggle-button, .navBar-menu-button').on('click', changeLayout);
