@@ -24,12 +24,15 @@ class DocSearchParser
         foreach ($aList as $a) {
             $path = $a->href;
             $name = $a->getNode()->textContent;
-            $jsonList[] = [
+            $tempList = [
                 'id'  => $id,
                 'title'  => strtolower($name),
-                'content'  => self::getMdContent($docRoot.$path),
-                'link'  => Parser::mdLink2Html($path),
+                'content'  => self::getMdContent($docRoot . '/' . $lang . '/' .$path),
+                'link'  => '/' . Parser::mdLink2Html($path),
             ];
+            if ($tempList['content']) {
+                $jsonList[] = $tempList;
+            }
             $id++;
         }
         return $jsonList;
