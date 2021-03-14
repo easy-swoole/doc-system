@@ -31,7 +31,7 @@ class Render
     {
         $file = ltrim($file,'/');
         $page = $this->parserMdFile($file,$language);
-        $sideBar = $this->parserMdFile('sidebar.md',$language);
+        $sideBar = $this->parserMdFile('sideBar.md',$language);
         $headHtml = $this->config2HtmlTag($page->getConfig());
         $data = [
             'sidebar'=>$sideBar->getHtml(),
