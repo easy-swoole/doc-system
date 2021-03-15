@@ -40,7 +40,7 @@ class DocSearchParser
 
     protected static function getSidebar($docRoot):string
     {
-        $sidebarPath = $docRoot."/sidebar.md";
+        $sidebarPath = $docRoot."/sideBar.md";
         //获取sideBar的parserHtml
         $sideBarResult = Parser::html($sidebarPath);
         $html = $sideBarResult->getHtml();
