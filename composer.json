@@ -5,7 +5,7 @@
         "ext-yaml": ">=2.0",
         "voku/simple_html_dom": "^4.7",
         "easyswoole/parsedown": "^1.0.0",
-        "easyswoole/http": "^1.3",
+        "easyswoole/http": "^2.0",
         "smarty/smarty": "^3.1"
     },
     "autoload": {
